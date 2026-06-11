@@ -1,5 +1,6 @@
 import { fileURLToPath, URL } from 'node:url'
 
+import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
@@ -8,6 +9,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 export default defineConfig({
   base: '/demo/',   // 注意：这里是你的仓库名 demo
   plugins: [
+    tailwindcss(),
     vue(),
     vueDevTools(),
   ],

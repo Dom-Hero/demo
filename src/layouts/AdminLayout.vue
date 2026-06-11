@@ -1,127 +1,112 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import FloatingLines from '@/components/background/FloatingLines.vue'
+import CardNav from '@/components/CardNav.vue'
 
 const route = useRoute()
 const router = useRouter()
+const menuOpen = ref(false)
 
-const menus = [
-  { path: '/dashboard', title: '工作台', icon: '◉' },
-  { path: '/user', title: '用户管理', icon: '◎' },
+const items = [
+  {
+    label: "About",
+    bgColor: "#0D0716",
+    textColor: "#fff",
+    links: [
+      { label: "Company", ariaLabel: "About Company" },
+      { label: "Careers", ariaLabel: "About Careers" }
+    ]
+  },
+  {
+    label: "Projects",
+    bgColor: "#170D27",
+    textColor: "#fff",
+    links: [
+      { label: "Featured", ariaLabel: "Featured Projects" },
+      { label: "Case Studies", ariaLabel: "Project Case Studies" }
+    ]
+  },
+  {
+    label: "Contact",
+    bgColor: "#271E37",
+    textColor: "#fff",
+    links: [
+      { label: "Email", ariaLabel: "Email us" },
+      { label: "Twitter", ariaLabel: "Twitter" },
+      { label: "LinkedIn", ariaLabel: "LinkedIn" }
+    ]
+  }
 ]
 
+// lineCount 按 enabledWaves 顺序对应每层：[top, middle, bottom]
+const enabledWaves: Array<'top' | 'middle' | 'bottom'> = ['top', 'middle', 'bottom']
+const lineCount = [5, 5, 5]
+const lineDistance = [8, 6, 4]
+
 const activePath = computed(() => route.path)
-const pageTitle = computed(() => (route.meta.title as string) || '')
+
+function toggleMenu() {
+  menuOpen.value = !menuOpen.value
+}
+
+function navigate(path: string) {
+  router.push(path)
+  menuOpen.value = false
+}
 </script>
 
 <template>
   <div class="layout">
-    <aside class="sidebar">
-      <div class="logo">BigHead Admin</div>
-      <nav class="menu">
-        <a
-          v-for="item in menus"
-          :key="item.path"
-          class="menu-item"
-          :class="{ active: activePath.startsWith(item.path) }"
-          @click="router.push(item.path)"
-        >
-          <span class="icon">{{ item.icon }}</span>
-          {{ item.title }}
-        </a>
-      </nav>
-    </aside>
-
-    <div class="main">
-      <header class="header">
-        <h1>{{ pageTitle }}</h1>
-        <div class="user">Admin</div>
-      </header>
-      <main class="content">
-        <RouterView />
-      </main>
+    <FloatingLines class="layout-bg" :enabled-waves="enabledWaves" :line-count="lineCount" :line-distance="lineDistance"
+      :bend-radius="5.0" :bend-strength="-0.5" :interactive="true" :parallax="true" interaction-scope="parent"
+      mix-blend-mode="normal" />
+    <div class="layout-header">
+      <CardNav logo="大头专属" logoAlt="大头专属" :items="items" baseColor="#fff" menuColor="#000" buttonBgColor="#111"
+        buttonTextColor="#fff" ease="power3.out" />
+    </div>
+    <div class="content">
+      <RouterView />
     </div>
   </div>
 </template>
 
 <style scoped>
 .layout {
-  display: flex;
-  min-height: 100vh;
-}
-
-.sidebar {
-  width: 220px;
-  flex-shrink: 0;
-  background: #001529;
-  color: #fff;
-}
-
-.logo {
-  height: 60px;
-  line-height: 60px;
-  padding: 0 20px;
-  font-size: 16px;
-  font-weight: 600;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.menu {
-  padding: 12px 0;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 24px;
-  color: rgba(255, 255, 255, 0.65);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.menu-item:hover,
-.menu-item.active {
-  color: #fff;
-  background: #1890ff;
-}
-
-.icon {
-  font-size: 14px;
-}
-
-.main {
-  flex: 1;
+  position: relative;
   display: flex;
   flex-direction: column;
-  min-width: 0;
-  background: #f0f2f5;
+  width: 100%;
+  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 60px;
-  padding: 0 24px;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+.layout-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
 }
 
-.header h1 {
-  font-size: 18px;
-  font-weight: 500;
-  color: #333;
+.layout-header {
+  position: relative;
+  flex-shrink: 0;
+  z-index: 2;
+  min-height: calc(1.2em + 60px + 1em);
 }
 
-.user {
-  font-size: 14px;
-  color: #666;
+@media (min-width: 768px) {
+  .layout-header {
+    min-height: calc(2em + 60px + 1em);
+  }
 }
 
 .content {
+  position: relative;
+  z-index: 1;
   flex: 1;
-  padding: 24px;
+  min-height: 0;
   overflow: auto;
+  padding: 0 32px 32px;
 }
 </style>
