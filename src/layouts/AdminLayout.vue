@@ -93,6 +93,7 @@ function navigate(path: string) {
   flex-shrink: 0;
   z-index: 2;
   min-height: calc(1.2em + 60px + 1em);
+  background-color: transparent;
 }
 
 @media (min-width: 768px) {
@@ -107,6 +108,12 @@ function navigate(path: string) {
   flex: 1;
   min-height: 0;
   overflow: auto;
-  padding: 0 32px 32px;
+  padding: 16px 32px 32px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.content::-webkit-scrollbar {
+  display: none;
 }
 </style>
