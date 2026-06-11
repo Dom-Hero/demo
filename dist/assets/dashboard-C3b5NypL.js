@@ -1,0 +1,1 @@
+import{i as e,n as t,r as n,t as r}from"./index-C68_L-N-.js";var i={},a={class:`page-card`};function o(r,i){return e(),n(`div`,a,[...i[0]||=[t(`h2`,{class:`page-title`},`工作台`,-1),t(`p`,{class:`page-desc`},`欢迎使用 BigHead 管理后台`,-1)]])}var s=r(i,[[`render`,o],[`__scopeId`,`data-v-089afb73`]]);export{s as default};
