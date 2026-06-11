@@ -6,6 +6,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/demo/',   // 注意：这里是你的仓库名 demo
   plugins: [
     vue(),
     vueDevTools(),
