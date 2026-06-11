@@ -1,0 +1,29 @@
+import { createRouter, createWebHistory } from 'vue-router'
+import AdminLayout from '@/layouts/AdminLayout.vue'
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      component: AdminLayout,
+      redirect: '/dashboard',
+      children: [
+        {
+          path: 'dashboard',
+          name: 'Dashboard',
+          component: () => import('@/views/dashboard/index.vue'),
+          meta: { title: '工作台' },
+        },
+        {
+          path: 'user',
+          name: 'User',
+          component: () => import('@/views/user/index.vue'),
+          meta: { title: '用户管理' },
+        },
+      ],
+    },
+  ],
+})
+
+export default router
