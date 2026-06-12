@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import { gsap } from 'gsap';
 import { nextTick, onBeforeUpdate, onMounted, onUnmounted, ref, watch, type VNodeRef } from 'vue';
+import { useRouter } from 'vue-router';
+import { useCardFilter } from '@/composables/useCardFilter';
+import Note from './note.vue';
+import StartBtn from './startBtn.vue';
+
+const router = useRouter();
+
+const navigateToUser = () => {
+  router.push('/user');
+};
 
 type CardNavLink = {
   label: string;
@@ -16,7 +26,7 @@ export type CardNavItem = {
 };
 
 export interface CardNavProps {
-  logo: string;
+  logo?: string;
   logoAlt?: string;
   items: CardNavItem[];
   className?: string;
@@ -25,14 +35,18 @@ export interface CardNavProps {
   menuColor?: string;
   buttonBgColor?: string;
   buttonTextColor?: string;
+  searchPlaceholder?: string;
 }
 
 const props = withDefaults(defineProps<CardNavProps>(), {
   logoAlt: 'Logo',
   className: '',
   ease: 'power3.out',
-  baseColor: '#fff'
+  baseColor: '#fff',
+  searchPlaceholder: '搜索卡片...'
 });
+
+const { searchQuery } = useCardFilter();
 
 const isHamburgerOpen = ref(false);
 const isExpanded = ref(false);
@@ -170,10 +184,10 @@ watch(
     <nav
       ref="navRef"
       :class="[
-        'card-nav block h-[60px] p-0 rounded-xl shadow-md relative overflow-hidden will-change-[height]',
+        'card-nav block h-[60px] p-0 rounded-xl relative overflow-hidden will-change-[height]',
         { open: isExpanded }
       ]"
-      :style="{ backgroundColor: props.baseColor }"
+      :style="{ '--nav-glass-tint': props.baseColor }"
     >
       <div
         class="card-nav-top top-0 z-[2] absolute inset-x-0 flex justify-between items-center p-2 px-[1.1rem] h-[60px]"
@@ -203,22 +217,32 @@ watch(
           />
         </div>
 
-        <div
-          class="md:top-1/2 md:left-1/2 md:absolute flex items-center order-1 md:order-none md:-translate-x-1/2 md:-translate-y-1/2 logo-container"
-        >
-          <img :src="props.logo" :alt="props.logoAlt" class="h-[28px] logo" />
+        <div class="card-nav-search-wrap">
+          <label class="card-nav-search" :style="{ color: props.menuColor || '#000' }">
+            <svg
+              class="card-nav-search-icon shrink-0"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <path d="M20 20L16.5 16.5" />
+            </svg>
+            <input
+              v-model="searchQuery"
+              type="search"
+              class="card-nav-search-input"
+              :placeholder="props.searchPlaceholder"
+              aria-label="搜索卡片"
+              autocomplete="off"
+            />
+          </label>
         </div>
-
-        <button
-          type="button"
-          class="hidden md:inline-flex px-4 py-2 border-0 rounded-[calc(0.75rem-0.2rem)] h-full font-medium transition-colors duration-300 cursor-pointer card-nav-cta-button"
-          :style="{
-            backgroundColor: props.buttonBgColor,
-            color: props.buttonTextColor
-          }"
-        >
-          Get Started
-        </button>
+        <StartBtn />
       </div>
 
       <div
@@ -235,23 +259,191 @@ watch(
           class="relative flex flex-col flex-[1_1_auto] md:flex-[1_1_0%] gap-2 p-[12px_16px] rounded-[calc(0.75rem-0.2rem)] min-w-0 h-auto md:h-full min-h-[60px] md:min-h-0 select-none nav-card"
           :style="{ backgroundColor: item.bgColor, color: item.textColor }"
         >
-          <div class="font-normal text-[18px] md:text-[22px] tracking-[-0.5px] nav-card-label">
-            {{ item.label }}
-          </div>
-          <div class="flex flex-col gap-[2px] mt-auto nav-card-links">
-            <a
-              v-for="(lnk, i) in item.links"
-              :key="`${lnk.label}-${i}`"
-              class="inline-flex items-center gap-[6px] hover:opacity-75 text-[15px] md:text-[16px] no-underline transition-opacity duration-300 cursor-pointer nav-card-link"
-              :href="lnk.href"
-              :aria-label="lnk.ariaLabel"
-            >
-              <v-icon name="go-arrow-up-right" class="nav-card-link-icon shrink-0" aria-hidden="true" />
-              {{ lnk.label }}
-            </a>
+          <div class="h-full w-full" role="link" tabindex="0" @click="navigateToUser" @keydown.enter="navigateToUser">
+            <Note />
           </div>
         </div>
       </div>
     </nav>
   </div>
 </template>
+
+<style scoped>
+.card-nav {
+  --glass-tint: var(--nav-glass-tint, #ffffff);
+
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--glass-tint) 28%, transparent) 0%,
+      color-mix(in srgb, var(--glass-tint) 14%, transparent) 100%
+    );
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 0.5px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.06),
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -0.5px 0 rgba(255, 255, 255, 0.06);
+}
+
+.card-nav.open {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--glass-tint) 28%, transparent) 0%,
+      color-mix(in srgb, var(--glass-tint) 14%, transparent) 100%
+    );
+  backdrop-filter: blur(48px) saturate(200%);
+  -webkit-backdrop-filter: blur(48px) saturate(200%);
+  border-color: rgba(255, 255, 255, 0.32);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.08),
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -0.5px 0 rgba(255, 255, 255, 0.08);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .card-nav {
+    background: color-mix(in srgb, var(--glass-tint) 75%, transparent);
+  }
+
+  .card-nav.open {
+    background: color-mix(in srgb, var(--glass-tint) 82%, transparent);
+  }
+}
+
+.card-nav-search-wrap {
+  order: 1;
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  max-width: 360px;
+  margin-inline: 8px;
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 640px) {
+  .card-nav-search-wrap {
+    max-width: 440px;
+  }
+}
+
+@media (min-width: 768px) {
+  .card-nav-search-wrap {
+    order: 0;
+    flex: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(360px, calc(100% - 11rem));
+    max-width: none;
+    margin-inline: 0;
+  }
+}
+
+.card-nav-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 9999px;
+  cursor: text;
+  isolation: isolate;
+  overflow: hidden;
+  border: 0.5px solid rgba(255, 255, 255, 0.38);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.24) 0%,
+      rgba(255, 255, 255, 0.06) 100%
+    );
+  backdrop-filter: blur(18px) saturate(190%) brightness(1.1);
+  -webkit-backdrop-filter: blur(18px) saturate(190%) brightness(1.1);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.58),
+    inset 0 -0.5px 0 rgba(255, 255, 255, 0.1),
+    0 2px 10px rgba(0, 0, 0, 0.05);
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.28s ease,
+    border-color 0.28s ease;
+}
+
+.card-nav-search::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse 90% 60% at 50% -10%,
+    rgba(255, 255, 255, 0.42) 0%,
+    transparent 72%
+  );
+  pointer-events: none;
+}
+
+.card-nav-search::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at 50% 120%,
+    rgba(255, 255, 255, 0.12) 0%,
+    transparent 55%
+  );
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.card-nav-search:focus-within {
+  transform: scale(1.04);
+  border-color: rgba(255, 255, 255, 0.52);
+  backdrop-filter: blur(28px) saturate(210%) brightness(1.16) contrast(1.04);
+  -webkit-backdrop-filter: blur(28px) saturate(210%) brightness(1.16) contrast(1.04);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.72),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.12),
+    0 4px 18px rgba(0, 0, 0, 0.08),
+    0 0 0 3px rgba(255, 255, 255, 0.14);
+}
+
+.card-nav-search-icon {
+  width: 15px;
+  height: 15px;
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+}
+
+.card-nav-search:focus-within .card-nav-search-icon {
+  opacity: 0.85;
+}
+
+.card-nav-search-input {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  line-height: 1;
+  color: inherit;
+}
+
+.card-nav-search-input::placeholder {
+  color: currentColor;
+  opacity: 0.42;
+}
+
+.card-nav-search-input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+</style>

@@ -15,14 +15,14 @@ const router = createRouter({
           component: () => import('@/views/dashboard/index.vue'),
           meta: { title: '工作台' },
         },
-        {
-          path: 'user',
-          name: 'User',
-          component: () => import('@/views/user/index.vue'),
-          meta: { title: '用户管理' },
-        },
       ],
     },
+     {
+      path: '/user',
+      name: 'User',
+      component: () => import('@/views/user/index.vue'),
+      meta: { title: '用户管理' },
+      },
   ],
 })
 

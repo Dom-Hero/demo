@@ -11,7 +11,7 @@ const menuOpen = ref(false)
 const items = [
   {
     label: "About",
-    bgColor: "#0D0716",
+    bgColor: "transparent",
     textColor: "#fff",
     links: [
       { label: "Company", ariaLabel: "About Company" },
@@ -20,7 +20,7 @@ const items = [
   },
   {
     label: "Projects",
-    bgColor: "#170D27",
+    bgColor: "transparent",
     textColor: "#fff",
     links: [
       { label: "Featured", ariaLabel: "Featured Projects" },
@@ -29,7 +29,7 @@ const items = [
   },
   {
     label: "Contact",
-    bgColor: "#271E37",
+    bgColor: "transparent",
     textColor: "#fff",
     links: [
       { label: "Email", ariaLabel: "Email us" },
@@ -62,8 +62,8 @@ function navigate(path: string) {
       :bend-radius="5.0" :bend-strength="-0.5" :interactive="true" :parallax="true" interaction-scope="parent"
       mix-blend-mode="normal" />
     <div class="layout-header">
-      <CardNav logo="大头专属" logoAlt="大头专属" :items="items" baseColor="#fff" menuColor="#000" buttonBgColor="#111"
-        buttonTextColor="#fff" ease="power3.out" />
+      <CardNav :items="items" baseColor="#fff" menuColor="#000" buttonBgColor="#111"
+        buttonTextColor="#fff" ease="power3.out" search-placeholder="搜索工具..." />
     </div>
     <div class="content">
       <RouterView />

@@ -1,7 +1,21 @@
 <script setup lang="ts">  
 import { herfList } from '@/constants/herfList'
 import InfoCard from '@/components/infoCard.vue'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { useCardFilter } from '@/composables/useCardFilter'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+
+const { searchQuery } = useCardFilter()
+
+const filteredList = computed(() => {
+  const query = searchQuery.value.trim().toLowerCase()
+  if (!query) return herfList
+
+  return herfList.filter(
+    item =>
+      item.title.toLowerCase().includes(query) ||
+      item.content.toLowerCase().includes(query)
+  )
+})
 
 const CARD_WIDTH = 190
 const GAP = 50
@@ -36,7 +50,14 @@ onUnmounted(() => observer?.disconnect())
       class="dashboard-container"
       :style="containerWidth ? { width: `${containerWidth}px` } : undefined"
     >
-      <InfoCard v-for="item in herfList" :key="item.href" :title="item.title" :content="item.content" :button-href="item.href" />
+      <InfoCard
+        v-for="item in filteredList"
+        :key="item.href"
+        :title="item.title"
+        :content="item.content"
+        :button-href="item.href"
+      />
+      <p v-if="filteredList.length === 0" class="empty-tip">未找到匹配的卡片</p>
     </div>
   </div>
 </template>
@@ -64,5 +85,14 @@ onUnmounted(() => observer?.disconnect())
   flex-shrink: 0;
   max-width: 100%;
   box-sizing: border-box;
+}
+
+.empty-tip {
+  width: 100%;
+  margin: 0;
+  padding: 48px 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 15px;
 }
 </style>

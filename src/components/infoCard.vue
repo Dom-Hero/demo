@@ -29,7 +29,7 @@ function openButtonHref() {
     position: relative;
     width: 190px;
     height: 190px;
-    background-color: #000;
+    background-color: rgba(0, 0, 0, 0.8);
     display: flex;
     flex-direction: column;
     justify-content: end;
@@ -53,7 +53,7 @@ function openButtonHref() {
     width: 200px;
     height: 200px;
     border-radius: 10px;
-    background: linear-gradient(-45deg, #fff01c 0%, #40c9ff 100%);
+    background: linear-gradient(-45deg, #e81cff 0%, #40c9ff 100%);
     z-index: -10;
     pointer-events: none;
     transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -64,7 +64,7 @@ function openButtonHref() {
     z-index: -1;
     position: absolute;
     inset: 0;
-    background: linear-gradient(-45deg, #fff01c 0%, #40c9ff 100%);
+    background: linear-gradient(-45deg, #fc00ff 0%, #00dbde 100%);
     transform: translate3d(0, 0, 0) scale(0.95);
     filter: blur(20px);
 }
