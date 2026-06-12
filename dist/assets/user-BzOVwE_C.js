@@ -1,1 +1,0 @@
-import{a as e,l as t,r as n,t as r}from"./index-C16bZhPe.js";var i={},a={class:`page-card`};function o(r,i){return t(),e(`div`,a,[...i[0]||=[n(`h2`,{class:`page-title`},`用户管理`,-1),n(`p`,{class:`page-desc`},`用户管理页面`,-1)]])}var s=r(i,[[`render`,o],[`__scopeId`,`data-v-4330bb2e`]]);export{s as default};
